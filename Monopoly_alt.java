@@ -27,7 +27,7 @@ public class Monopoly {
         boolean go=true;
         if (go) insertPlayers();
         //System.out.println("yes_no "+yes_no);
-        if (go_go != false) {
+        if (go_go) {
             System.out.println("FOLLOW THE NEXT QUEUE " + Arrays.toString(def_names));
 //            if (numberOfPlayers >= 2 && def_names[numberOfPlayers - 1] != null)
             players_create();
@@ -170,6 +170,18 @@ class Field{
         this.owner=owner;
         this.isAsset=isAsset;
     }
+    Field(String title, byte location, short purchase, short mortgage, short defaultRent, char label, boolean isOwned, boolean isMortgaged, String owner, boolean isAsset){
+        this.title=title;
+        this.location=location;
+        this.purchase=purchase;
+        this.label=label;
+        this.mortgage=mortgage;
+        this.defaultRent=defaultRent;
+        this.isMortgaged=isMortgaged;
+        this.isOwned=isOwned;
+        this.owner=owner;
+        this.isAsset=isAsset;
+    }
 
     static Field [] field;
     static Field [] field_create(){
@@ -187,13 +199,13 @@ class Field{
         field [36] = new Field("CHANCE", (byte) 36, "get some chanceCard", false);
         field [38] = new Field("LUXURY TAX", (byte) 38, "no pay -$100, no game", false);
 
-        field [5] = new Field("SUBWAY", (byte) 5, (byte) 200, (byte) 100, (byte) 25, 't', false, false, false, null, true);
-        field [15] = new Field("RAILWAY", (byte) 15, (byte) 200, (byte) 100, (byte) 25, 't', false, false, false, null, true);
-        field [25] = new Field("PORT", (byte) 25, (byte) 200, (byte) 100, (byte) 25, 't', false, false, false, null, true);
-        field [35] = new Field("AIRPORT", (byte) 35, (byte) 200, (byte) 100, (byte) 25, 't', false, false, false, null, true);
+        field [5] = new Field("SUBWAY", (byte) 5, (short) 200, (byte) 100, (byte) 25, 't', false, false, null, true);
+        field [15] = new Field("RAILWAY", (byte) 15, (short) 200, (byte) 100, (byte) 25, 't', false, false, null, true);
+        field [25] = new Field("PORT", (byte) 25, (short) 200, (byte) 100, (byte) 25, 't', false, false, null, true);
+        field [35] = new Field("AIRPORT", (byte) 35, (short) 200, (byte) 100, (byte) 25, 't', false, false, null, true);
 
-        field [12] = new Field("ELECTRIC UTILITY", (byte) 12, (byte) 150, (byte) 75, (byte) 4, 'u', false, false, false, null, true);
-        field [28] = new Field("WATER UTILITY", (byte) 28, (byte) 150, (byte) 75, (byte) 4, 'u', false, false, false, null, true);
+        field [12] = new Field("ELECTRIC UTILITY", (byte) 12, (short) 150, (byte) 75, (byte) 4, 'u', false, false, false, null, true);
+        field [28] = new Field("WATER UTILITY", (byte) 28, (short) 150, (byte) 75, (byte) 4, 'u', false, false, false, null, true);
 
 
         field [1] = new Field("MEDITERRANEAN AVENUE", (byte) 1, (short) 60, (short) 30, (short) 2, (short) 10, (short) 30, (short) 90, (short) 160, (short) 250, (short) 50, (short) 50, (byte) 0, (byte) 0, 'b', false, false, false, false, false, null, true, true);
@@ -321,7 +333,7 @@ class Players {
     static byte dTwo = 0;
 
     static byte throwDices() {
-        dOne = (byte) 1;// Math.floor(1+Math.random()*6);
+        dOne = (byte) 3;// Math.floor(1+Math.random()*6);
         dTwo = (byte) 2;// Math.floor(1+Math.random()*6);
         moving = (byte) (dOne + dTwo);
         return moving;
@@ -389,7 +401,7 @@ class Players {
         for (byte i=0;i<Field.field.length;) {
             if(Field.field[i].isAsset) {
                     if (Field.field[i].isOwned && Field.field[i].owner.equals(players[numberOfPlayers - players_increment].name)){
-                        System.out.println(Field.field[i].title+" your asset"); }
+                        System.out.println(Field.field[i].title+" your asset labelled "+Field.field[i].isLabelled+", house(s) "+Field.field[i].houseQuantity+", hotel "+Field.field[i].hotelQuantity); }
             }
             i++;
         }
@@ -473,14 +485,73 @@ class Players {
         System.out.println(players[numberOfPlayers - players_increment].account-=Field.field[players[numberOfPlayers - players_increment].position].purchase);
 
     }
+    static short check_t_owner(){
+        String owner;
+        byte a,b,c,d;
+        a=b=c=d=0;
+        for (byte k=0;k<numberOfPlayers; k++) {
+            if (Field.field[players[numberOfPlayers - players_increment].position].owner.equals(players[k].name)) {
+                owner = players[k].name;
+                if (Field.field[5].isOwned && !Field.field[5].isMortgaged) {
+                    if (Field.field[5].owner.equals(owner)) {
+                        a = 1;
+                    }
+                } if (Field.field[15].isOwned && !Field.field[15].isMortgaged) {
+                    if (Field.field[15].owner.equals(owner)) {
+                        b = 1;
+                    }
+                } if (Field.field[25].isOwned && !Field.field[25].isMortgaged) {
+                    if (Field.field[25].owner.equals(owner)) {
+                        c = 1;
+                    }
+                } if (Field.field[35].isOwned && !Field.field[35].isMortgaged) {
+                    if (Field.field[35].owner.equals(owner)) {
+                        d = 1;
+                    }
+                }
+            }
+        break;}
+        if((a+b+c+d)==1)return 25;
+        else if ((a+b+c+d)==2)return 50;
+        else if ((a+b+c+d)==3)return 100;
+        else return 200;
+    }
+
     static void pay_rent(){
-        System.out.println(players[numberOfPlayers - players_increment].account-=Field.field[players[numberOfPlayers - players_increment].position].defaultRent);
+        //System.out.println(players[numberOfPlayers - players_increment].account-=Field.field[players[numberOfPlayers - players_increment].position].defaultRent);
         for (byte i=0;i<Field.field.length;) {
-            if(Field.field[i].isAsset&&Field.field[i].isOwned) {
+            if(Field.field[i].isAsset&&Field.field[i].isOwned&&!Field.field[i].isMortgaged) {
+                if(Field.field[players[numberOfPlayers - players_increment].position].label=='t'){
+                    System.out.println(players[numberOfPlayers - players_increment].account-=check_t_owner());
+                    for (byte k=0;k<numberOfPlayers; k++){
+                        if (Field.field[players[numberOfPlayers - players_increment].position].owner.equals(players[k].name)) {
+                            System.out.println(players[k].account +=check_t_owner());
+                            break;}
+                    }
+                break;}
+                if(Field.field[players[numberOfPlayers - players_increment].position].isLabelled){
+                    if(Field.field[players[numberOfPlayers - players_increment].position].label=='u'&&Field.field[players[numberOfPlayers - players_increment].position].isLabelled){
+                        System.out.println(players[numberOfPlayers - players_increment].account-=(10*throwDices()));
+                        for (byte k=0;k<numberOfPlayers; k++){
+                            if (Field.field[players[numberOfPlayers - players_increment].position].owner.equals(players[k].name)) {
+                                System.out.println(players[k].account +=(10*moving));
+                                break;}
+                        }
+                    }else{
+                        System.out.println(players[numberOfPlayers - players_increment].account-=(4*throwDices()));
+                        for (byte k=0;k<numberOfPlayers; k++){
+                            if (Field.field[players[numberOfPlayers - players_increment].position].owner.equals(players[k].name)) {
+                                System.out.println(players[k].account +=(4*moving));
+                                break;}
+                        }
+                    }
+
+                }else{
                 for (byte k=0;k<numberOfPlayers; k++){
                 if (Field.field[players[numberOfPlayers - players_increment].position].owner.equals(players[k].name)) {
                     System.out.println(players[k].account += Field.field[players[numberOfPlayers - players_increment].position].defaultRent);
                 break;}
+                }
                 }
             }
             i++;
@@ -621,13 +692,14 @@ class Players {
                                 in_auction_count++;
                             }
                             if(players.length-in_auction_count==1){
-                                for (byte k =0; k<players.length; k++){
-                                    if (players[k].inAuction){
-                                System.out.println(players[k].name + " WINS AUCTION, paid $" +players[k].auction+" "+(players[k].account-=highest_bid));
-                                Field.field[players[numberOfPlayers - players_increment].position].owner=players[k].name;
-                                System.out.println(players[k].name+" now has asset "+Field.field[players[numberOfPlayers - players_increment].position].title);
-                                Field.field[players[numberOfPlayers - players_increment].position].isOwned=true;
-                                break;}
+                                for (Players player : players) {
+                                    if (player.inAuction) {
+                                        System.out.println(player.name + " WINS AUCTION, paid $" + player.auction + " " + (player.account -= highest_bid));
+                                        Field.field[players[numberOfPlayers - players_increment].position].owner = player.name;
+                                        System.out.println(player.name + " now has asset " + Field.field[players[numberOfPlayers - players_increment].position].title);
+                                        Field.field[players[numberOfPlayers - players_increment].position].isOwned = true;
+                                        break;
+                                    }
                                 }
                                 break;
                             }
@@ -637,22 +709,22 @@ class Players {
                     }
                 }
                 System.out.println("cleaning");
-                for (byte i =0; i<players.length; i++) {
-                    players[i].auction=0;
-                    players[i].inAuction=true;
+                for (Players player : players) {
+                    player.auction = 0;
+                    player.inAuction = true;
                 }
             }catch (IOException e) {
                 System.out.println("please type in correctly, an auction starts over");
-                for (byte i =0; i<players.length; i++) {
-                    players[i].auction=0;
-                    players[i].inAuction=true;
+                for (Players player : players) {
+                    player.auction = 0;
+                    player.inAuction = true;
                 }
                 auction();
             }catch (NumberFormatException e){
                 System.out.println("please type in correctly, an auction starts over");
-                for (byte i =0; i<players.length; i++) {
-                    players[i].auction=0;
-                    players[i].inAuction=true;
+                for (Players player : players) {
+                    player.auction = 0;
+                    player.inAuction = true;
                 }
                 auction();
             }
@@ -808,7 +880,7 @@ class Players {
                     System.out.println("GAME OVER");
                     break;
                 case "cheat_LIKE_A_BOSS":
-                    if (notBoss&&players[numberOfPlayers - players_increment].isBankrupted==false){
+                    if (notBoss&& !players[numberOfPlayers - players_increment].isBankrupted){
                         System.out.println("THE BOSS IS ONE, you out");
                         players[numberOfPlayers - players_increment].isBankrupted=true;
                         players_increment--;
@@ -855,13 +927,13 @@ class Players {
                     }
                 }
                 case "card":
-                    if(players[numberOfPlayers - players_increment].chanceCard==true) {
+                    if(players[numberOfPlayers - players_increment].chanceCard) {
                         System.out.println("you have used your chance card to set free");
                         players[numberOfPlayers - players_increment].chanceCard = false;
                         players[numberOfPlayers - players_increment].prisonBreakCount = 0;
                         players[numberOfPlayers - players_increment].isPrisoner = false;
                         break;
-                    }else if(players[numberOfPlayers - players_increment].commChestCard==true){
+                    }else if(players[numberOfPlayers - players_increment].commChestCard){
                         System.out.println("you have used your Community Chest card to set free");
                         players[numberOfPlayers - players_increment].chanceCard = false;
                         players[numberOfPlayers - players_increment].prisonBreakCount = 0;
