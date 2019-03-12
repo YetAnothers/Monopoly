@@ -14,22 +14,11 @@ import static com.company.Players.*;
 public class Monopoly {
     public static void main(String[] args) {
 
-//        Field [] field = new Field[40];
-
-
-//
-//        System.out.println("diceOne "+dOne);
-//        System.out.println("diceTwo "+dTwo);
-//        System.out.println("throwDices "+throwDices());
-//        System.out.println("movingMethod "+moving());
-//        System.out.println("returnMove "+moving);
 
         boolean go=true;
         if (go) insertPlayers();
-        //System.out.println("yes_no "+yes_no);
         if (go_go) {
             System.out.println("FOLLOW THE NEXT QUEUE " + Arrays.toString(def_names));
-//            if (numberOfPlayers >= 2 && def_names[numberOfPlayers - 1] != null)
             players_create();
             Field.field_create();
             Chance.chance_create();
@@ -37,62 +26,12 @@ public class Monopoly {
             CommunityChest.communityChest_create();
             shuffleArray(CommunityChest.communityChest);
 
-            //shuffleArray(CommunityChest.suffled_communityChest);
-//            System.out.println(Chance.chance[0]);
-//            if(Chance.chance[0].charAt(0)=='0')System.out.println(Chance.chance[0]);
-//            System.out.println(Arrays.toString(Chance.chance));
-//            shuffleArray(Chance.suffled_chance);
-//            System.out.println(Arrays.toString(Chance.suffled_chance));
-//            if(Chance.suffled_chance[0].charAt(0)=='0')System.out.println(Chance.chance[0]);
-//            //System.out.println(Chance.chance[0]);
-//            System.out.println(Arrays.toString(Chance.chance));
-            //System.out.println(Chance.chance[0]);
-
-//            System.out.println(Arrays.toString(CommunityChest.communityChest));
-            //turn=numberOfPlayers;
             players_increment = numberOfPlayers;
 
             turn = (byte)(players_increment-1);
-            //(byte)(numberOfPlayers-1);
-            //if (players_increment < 1){turn=(byte)(players_increment-1);}
             move();
-//            do {
-//               // turning();
-//                move();
-//            }
-//ddsddsdsd
-//
-//                while(numberOfPlayers-players_increment<numberOfPlayers-turn);{
-//                //move();
-//                }
 
 
-//
-//            players[0].account = 1023;
-//            players[2].account = 103;
-//            players[1].account += 100;
-//
-//            System.out.println(def_names[0] + " " + players[0].account + "");
-//            System.out.println(def_names[1] + " " + players[1].account + " ");
-//            System.out.println(def_names[1] + " " + players[1].position + " ");
-//            System.out.println(def_names[1] + " " + players[1].isBankrupted + " ");
-//            System.out.println(def_names[1] + " " + players[1].chanceCard + " " + players[1].commChestCard + "");
-//            System.out.println(def_names[4] + " " + players[4].account + " ");
-//            System.out.println(def_names[5] + " " + players[5].account + " ");
-//            if (0 == 0) {
-//                players[5].players_status(players[5]);
-//            }
-//            if (0 == 0) {
-//                players[0].players_status(players[0]);
-//            }
-
-
-
-
-
-
-            //Field f1 = new Field("Street 1",players[1].name);
-            //System.out.println(f1.owner);
 
         }
     }
